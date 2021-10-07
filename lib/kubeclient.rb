@@ -403,6 +403,26 @@ module Kubeclient
       @faraday_client ||= create_faraday_client
     end
 
+    def evict_pod(pod_name, namespace)
+      ns = build_namespace_prefix(namespace)
+
+      payload = {
+        # FIXME: version only supported for < v1.22
+        # need to find a way to extract the sub-resource api version
+        # without getting on the way of the discovery code
+        apiVersion: 'policy/v1beta1',
+        kind: 'Eviction',
+        metadata: {
+          name: pod_name,
+          namespace: namespace
+        }
+      }
+      response = handle_exception do
+        faraday_client.post(ns + "pods/#{pod_name}/eviction", payload.to_json, json_headers)
+      end
+      format_response(@as, response.body)
+    end
+
     # Accepts the following options:
     #   :namespace (string) - the namespace of the entity.
     #   :name (string) - the name of the entity to watch.
