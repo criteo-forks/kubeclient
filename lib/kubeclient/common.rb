@@ -302,6 +302,27 @@ module Kubeclient
       end
     end
 
+    def evict_pod(pod_name, namespace)
+      ns = build_namespace_prefix(namespace)
+
+      payload = {
+        # FIXME: version only supported for < v1.22
+        # need to find a way to extract the sub-resource api version
+        # without getting on the way of the discovery code
+        apiVersion: 'policy/v1beta1',
+        kind: 'Eviction',
+        metadata: {
+          name: pod_name,
+          namespace: namespace
+        }
+      }
+      response = handle_exception do
+        rest_client[ns + "pods/#{pod_name}/eviction"]
+          .post(payload.to_json, { 'Content-Type' => 'application/json' }.merge(@headers))
+      end
+      format_response(@as, response.body)
+    end
+
     # Accepts the following options:
     #   :namespace (string) - the namespace of the entity.
     #   :name (string) - the name of the entity to watch.
