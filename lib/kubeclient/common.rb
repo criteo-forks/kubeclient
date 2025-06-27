@@ -36,6 +36,8 @@ module Kubeclient
     DEFAULT_HTTP_PROXY_URI = nil
     DEFAULT_HTTP_MAX_REDIRECTS = 10
 
+    DEFAULT_KEEP_ALIVE_TIMEOUT = 60
+
     SEARCH_ARGUMENTS = {
       'labelSelector'   => :label_selector,
       'fieldSelector'   => :field_selector,
@@ -55,6 +57,7 @@ module Kubeclient
     attr_reader :auth_options
     attr_reader :http_proxy_uri
     attr_reader :http_max_redirects
+    attr_reader :keep_alive_timeout
     attr_reader :headers
     attr_reader :discovered
 
@@ -68,6 +71,7 @@ module Kubeclient
       timeouts: DEFAULT_TIMEOUTS,
       http_proxy_uri: DEFAULT_HTTP_PROXY_URI,
       http_max_redirects: DEFAULT_HTTP_MAX_REDIRECTS,
+      keep_alive_timeout: DEFAULT_KEEP_ALIVE_TIMEOUT,
       as: :ros
     )
       validate_auth_options(auth_options)
@@ -85,6 +89,7 @@ module Kubeclient
       @timeouts = DEFAULT_TIMEOUTS.merge(timeouts)
       @http_proxy_uri = http_proxy_uri ? http_proxy_uri.to_s : nil
       @http_max_redirects = http_max_redirects
+      @keep_alive_timeout = keep_alive_timeout
       @as = as
 
       if auth_options[:bearer_token_file]
@@ -665,6 +670,7 @@ module Kubeclient
         basic_auth_user: @auth_options[:username],
         basic_auth_password: @auth_options[:password],
         headers: get_headers,
+        keep_alive_timeout: @keep_alive_timeout,
         http_proxy_uri: @http_proxy_uri,
         http_max_redirects: http_max_redirects
       }

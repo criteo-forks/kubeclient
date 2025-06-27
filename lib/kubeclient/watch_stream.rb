@@ -9,6 +9,7 @@ module Kubeclient
         @http_client = nil
         @http_options = http_options
         @http_options[:http_max_redirects] ||= Kubeclient::Client::DEFAULT_HTTP_MAX_REDIRECTS
+        @http_options[:keep_alive_timeout] ||= Kubeclient::Client::DEFAULT_KEEP_ALIVE_TIMEOUT
         @formatter = formatter
       end
 
@@ -61,6 +62,10 @@ module Kubeclient
             user: @http_options[:basic_auth_user],
             pass: @http_options[:basic_auth_password]
           )
+        end
+
+        if @http_options[:keep_alive_timeout].positive?
+          client = client.persistent(@uri.origin, timeout: @http_options[:keep_alive_timeout])
         end
 
         client
