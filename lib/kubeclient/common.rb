@@ -49,7 +49,8 @@ module Kubeclient
     WATCH_ARGUMENTS = {
       'labelSelector'   => :label_selector,
       'fieldSelector'   => :field_selector,
-      'resourceVersion' => :resource_version
+      'resourceVersion' => :resource_version,
+      'timeoutSeconds'  => :timeout_seconds,
     }.freeze
 
     attr_reader :api_endpoint
@@ -339,6 +340,7 @@ module Kubeclient
     #   :label_selector (string) - a selector to restrict the list of returned objects by labels.
     #   :field_selector (string) - a selector to restrict the list of returned objects by fields.
     #   :resource_version (string) - shows changes that occur after passed version of a resource.
+    #   :timeout_seconds (integer) - limits the duration of the watch call.
     #   :as (:raw|:ros) - defaults to :ros
     #     :raw - return the raw response body as a string
     #     :ros - return a collection of RecursiveOpenStruct objects
